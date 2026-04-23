@@ -57,9 +57,25 @@ body {
 
 /* NEXT PRAYER HIGHLIGHT */
 .next {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
+  animation: glowPulse 2s ease-in-out infinite;
 }
 
+/* ✨ Glow animation */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(255,255,255,0.0);
+    background: rgba(255,255,255,0.10);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.18);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255,255,255,0.0);
+    background: rgba(255,255,255,0.10);
+  }
+}
 /* FOOTER */
 .footer {
   position:absolute;
