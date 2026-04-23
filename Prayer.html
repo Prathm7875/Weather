@@ -13,17 +13,12 @@ body {
   color:white;
   padding:15px;
   border-radius:10px;
-  position:relative;
-}
-
-.title {
-  font-size:12px;
-  opacity:0.7;
-  margin-top:10px;
 }
 
 .prayer {
   margin:10px 0;
+  padding:6px;
+  border-radius:6px;
 }
 
 .name {
@@ -35,34 +30,44 @@ body {
   font-weight:bold;
 }
 
+/* 🔔 Highlight next prayer */
+.next {
+  background: rgba(255,255,255,0.2);
+}
+
+.title {
+  font-size:12px;
+  opacity:0.7;
+  margin-top:10px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="card" id="prayerCard">
 
-  <div class="prayer">
+  <div class="prayer" id="FajrBox">
     <div class="name">Fajr</div>
     <div class="time" id="Fajr"></div>
   </div>
 
-  <div class="prayer">
+  <div class="prayer" id="DhuhrBox">
     <div class="name">Dhuhr</div>
     <div class="time" id="Dhuhr"></div>
   </div>
 
-  <div class="prayer">
+  <div class="prayer" id="AsrBox">
     <div class="name">Asr</div>
     <div class="time" id="Asr"></div>
   </div>
 
-  <div class="prayer">
+  <div class="prayer" id="MaghribBox">
     <div class="name">Maghrib</div>
     <div class="time" id="Maghrib"></div>
   </div>
 
-  <div class="prayer">
+  <div class="prayer" id="IshaBox">
     <div class="name">Isha</div>
     <div class="time" id="Isha"></div>
   </div>
@@ -78,15 +83,48 @@ function loadPrayer(){
  .then(d=>{
    let t=d.data.timings;
 
-   Fajr.innerText=t.Fajr;
-   Dhuhr.innerText=t.Dhuhr;
-   Asr.innerText=t.Asr;
-   Maghrib.innerText=t.Maghrib;
-   Isha.innerText=t.Isha;
+   const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+   // Set values
+   prayers.forEach(p=>{
+     document.getElementById(p).innerText = t[p];
+     document.getElementById(p+"Box").classList.remove("next");
+   });
+
+   highlightNextPrayer(t);
  });
 }
 
+// 🔔 Logic to highlight next prayer
+function highlightNextPrayer(timings){
+  const now = new Date();
+
+  const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+  let next = null;
+
+  for(let p of prayers){
+    let [h,m] = timings[p].split(":");
+
+    let prayerTime = new Date();
+    prayerTime.setHours(h, m, 0);
+
+    if(prayerTime > now){
+      next = p;
+      break;
+    }
+  }
+
+  // If all prayers passed → next is Fajr (next day)
+  if(!next) next = "Fajr";
+
+  document.getElementById(next + "Box").classList.add("next");
+}
+
 loadPrayer();
+
+// refresh every minute (important for accuracy)
+setInterval(loadPrayer, 60000);
+
 </script>
 
 </body>
