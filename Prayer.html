@@ -1,198 +1,349 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-body {
-  margin:0;
-  font-family: Segoe UI;
-}
+  :root{
+    --card-w: 260px;
+    --card-h: 360px;
 
-/* CARD */
-.card {
-  width:260px;
-  height:360px;
-  background: linear-gradient(180deg,#2c5d87,#1f3c5b);
-  color:white;
-  padding:16px;
-  border-radius:12px;
-  position:relative;
-  overflow:hidden;
-  box-sizing:border-box;
-}
+    --bg1:#2c5d87;
+    --bg2:#1f3c5b;
 
-/* CLOSE BUTTON */
-.close {
-  position:absolute;
-  top:10px;
-  right:12px;
-  font-size:14px;
-  cursor:pointer;
-  opacity:0.8;
-}
+    --text: rgba(255,255,255,.95);
+    --muted: rgba(255,255,255,.65);
 
-/* PRAYER BLOCK */
-.prayer {
-  margin-bottom:12px;
-  padding:6px 8px;
-  border-radius:6px;
-}
+    --glass: rgba(255,255,255,.10);
+    --glass2: rgba(255,255,255,.16);
 
-/* NAME + TIME */
-.name {
-  font-size:13px;
-  opacity:0.7;
-}
-
-.time {
-  font-size:20px;
-  font-weight:600;
-  margin-top:2px;
-}
-
-/* BIG EMPHASIS (like Dhuhr in your image) */
-.highlight-text {
-  font-size:22px;
-  font-weight:700;
-}
-
-/* NEXT PRAYER HIGHLIGHT */
-.next {
-  background: rgba(255,255,255,0.12);
-  animation: glowPulse 2s ease-in-out infinite;
-}
-
-/* ✨ Glow animation */
-@keyframes glowPulse {
-  0% {
-    box-shadow: 0 0 0 rgba(255,255,255,0.0);
-    background: rgba(255,255,255,0.10);
+    --border: rgba(255,255,255,.14);
+    --shadow: 0 18px 40px rgba(0,0,0,.30);
   }
-  50% {
-    box-shadow: 0 0 12px rgba(255,255,255,0.35);
-    background: rgba(255,255,255,0.18);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(255,255,255,0.0);
-    background: rgba(255,255,255,0.10);
-  }
-}
-/* FOOTER */
-.footer {
-  position:absolute;
-  bottom:12px;
-  left:16px;
-  font-size:12px;
-  opacity:0.6;
-  letter-spacing:1px;
-}
 
-/* MOSQUE BACKGROUND */
-.mosque-bg {
-  position:absolute;
-  bottom:0;
-  right:0;
-  width:170px;
-  opacity:0.08;
-  pointer-events:none;
-}
+  body{
+    margin:0;
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    background:#f3f5f7;
+    padding:16px;
+  }
+
+  /* PREMIUM CARD */
+  .card{
+    width:var(--card-w);
+    height:var(--card-h);
+    border-radius:18px;
+    position:relative;
+    overflow:hidden;
+    color:var(--text);
+    box-shadow: var(--shadow);
+    box-sizing:border-box;
+
+    /* Rich premium gradient */
+    background:
+      radial-gradient(110px 110px at 20% 18%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
+      radial-gradient(160px 160px at 85% 15%, rgba(255,255,255,.10), rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+  }
+
+  /* Subtle border to feel "premium" */
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.12);
+    pointer-events:none;
+  }
+
+  /* Decorative pattern layer */
+  .pattern{
+    position:absolute;
+    inset:-40px -40px auto auto;
+    width:190px;
+    opacity:.18;
+    pointer-events:none;
+    filter: blur(.0px);
+    transform: rotate(0deg);
+  }
+
+  /* Mosque silhouette layer (bottom-right) */
+  .mosque{
+    position:absolute;
+    right:-6px;
+    bottom:-8px;
+    width:190px;
+    opacity:.12;
+    pointer-events:none;
+  }
+
+  /* Top row */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 14px 4px 14px;
+  }
+
+  .title{
+    font-size:12px;
+    letter-spacing:.6px;
+    opacity:.75;
+    text-transform: uppercase;
+  }
+
+  .close{
+    width:28px;
+    height:28px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    cursor:pointer;
+    color:rgba(255,255,255,.85);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    transition: all .2s ease;
+    user-select:none;
+  }
+  .close:hover{
+    background: rgba(255,255,255,.12);
+    transform: translateY(-1px);
+  }
+
+  /* Prayer list */
+  .list{
+    padding: 6px 14px 54px 14px; /* IMPORTANT: bottom padding prevents footer overlap */
+  }
+
+  .prayer{
+    padding:10px 10px;
+    border-radius:12px;
+    margin: 8px 0;
+    position:relative;
+    backdrop-filter: blur(6px);
+  }
+
+  .name{
+    font-size:13px;
+    color: var(--muted);
+    line-height:1.1;
+  }
+
+  .time{
+    margin-top:2px;
+    font-size:20px;
+    font-weight:650;
+    letter-spacing:.3px;
+  }
+
+  /* Dhuhr emphasized like reference image */
+  #Dhuhr{
+    font-size:22px;
+    font-weight:750;
+  }
+
+  /* Next prayer "premium" highlight */
+  .next{
+    background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+    border: 1px solid rgba(255,255,255,.14);
+    animation: glowPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse{
+    0%{
+      box-shadow: 0 0 0 rgba(255,255,255,0);
+      transform: translateY(0);
+    }
+    50%{
+      box-shadow: 0 0 18px rgba(255,255,255,.22);
+      transform: translateY(-1px);
+    }
+    100%{
+      box-shadow: 0 0 0 rgba(255,255,255,0);
+      transform: translateY(0);
+    }
+  }
+
+  /* Footer */
+  .footer{
+    position:absolute;
+    left:14px;
+    bottom:12px;
+    font-size:11px;
+    letter-spacing:1.6px;
+    opacity:.65;
+    text-transform: uppercase;
+  }
+
+  /* Tiny divider line for premium feel */
+  .divider{
+    height:1px;
+    background: rgba(255,255,255,.10);
+    margin: 8px 14px 0 14px;
+  }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-
-  <div class="close">✕</div>
-
-  <div class="prayer" id="FajrBox">
-    <div class="name">Fajr</div>
-    <div class="time" id="Fajr"></div>
+<div class="card" id="card">
+  <!-- top -->
+  <div class="topbar">
+    <div class="title">Prayer Timings</div>
+    <div class="close" id="closeBtn">✕</div>
   </div>
 
-  <div class="prayer" id="DhuhrBox">
-    <div class="name">Dhuhr</div>
-    <div class="time highlight-text" id="Dhuhr"></div>
-  </div>
+  <div class="divider"></div>
 
-  <div class="prayer" id="AsrBox">
-    <div class="name">Asr</div>
-    <div class="time" id="Asr"></div>
-  </div>
+  <!-- decorative islamic pattern (inline SVG) -->
+  <svg class="pattern" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <pattern id="p" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M20 0 L40 20 L20 40 L0 20 Z" fill="rgba(255,255,255,.55)"/>
+        <path d="M20 8 L32 20 L20 32 L8 20 Z" fill="rgba(31,60,91,.9)"/>
+      </pattern>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="rgba(255,255,255,.75)"/>
+        <stop offset="1" stop-color="rgba(255,255,255,.25)"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="200" height="200" fill="url(#p)"/>
+    <path d="M25 150 Q100 60 175 150" fill="none" stroke="url(#g)" stroke-width="6" opacity=".55"/>
+    <path d="M45 150 Q100 85 155 150" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="4" opacity=".6"/>
+  </svg>
 
-  <div class="prayer" id="MaghribBox">
-    <div class="name">Maghrib</div>
-    <div class="time" id="Maghrib"></div>
-  </div>
+  <!-- mosque silhouette (inline SVG) -->
+  <svg class="mosque" viewBox="0 0 260 260" aria-hidden="true">
+    <g fill="rgba(255,255,255,.85)">
+      <path d="M130 40c18 0 32 14 32 32 0 12-7 22-17 28v10h-30V100c-10-6-17-16-17-28 0-18 14-32 32-32z" opacity=".65"/>
+      <path d="M55 235v-80c0-22 18-40 40-40h70c22 0 40 18 40 40v80H55z" opacity=".35"/>
+      <path d="M110 235v-55c0-12 10-22 22-22s22 10 22 22v55h-44z" opacity=".55"/>
+      <path d="M35 235h190v10H35z" opacity=".35"/>
+      <!-- minarets -->
+      <path d="M30 235v-90l10-10 10 10v90H30z" opacity=".30"/>
+      <path d="M210 235v-90l10-10 10 10v90h-20z" opacity=".30"/>
+      <path d="M40 120l-8-12 8-12 8 12-8 12z" opacity=".35"/>
+      <path d="M220 120l-8-12 8-12 8 12-8 12z" opacity=".35"/>
+    </g>
+  </svg>
 
-  <div class="prayer" id="IshaBox">
-    <div class="name">Isha</div>
-    <div class="time" id="Isha"></div>
+  <!-- prayers -->
+  <div class="list">
+    <div class="prayer" id="FajrBox">
+      <div class="name">Fajr</div>
+      <div class="time" id="Fajr">--:--</div>
+    </div>
+
+    <div class="prayer" id="DhuhrBox">
+      <div class="name">Dhuhr</div>
+      <div class="time" id="Dhuhr">--:--</div>
+    </div>
+
+    <div class="prayer" id="AsrBox">
+      <div class="name">Asr</div>
+      <div class="time" id="Asr">--:--</div>
+    </div>
+
+    <div class="prayer" id="MaghribBox">
+      <div class="name">Maghrib</div>
+      <div class="time" id="Maghrib">--:--</div>
+    </div>
+
+    <div class="prayer" id="IshaBox">
+      <div class="name">Isha</div>
+      <div class="time" id="Isha">--:--</div>
+    </div>
   </div>
 
   <div class="footer">PRAYER TIMINGS</div>
-
-  <!-- Mosque Image -->
-  <img src="https://www.svgrepo.com/show/403276/mosque.svg" class="mosque-bg">
-
 </div>
 
 <script>
-function loadPrayer(){
- fetch("https://api.aladhan.com/v1/timingsByCity?city=Doha&country=Qatar&method=4")
- .then(r=>r.json())
- .then(d=>{
-   let t=d.data.timings;
+  // ✅ Change these if needed
+  const CITY = "Doha";
+  const COUNTRY = "Qatar";
+  const METHOD = 4;
 
-   const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+  // Close button
+  document.getElementById("closeBtn").addEventListener("click", () => {
+    document.getElementById("card").style.display = "none";
+  });
 
-   prayers.forEach(p=>{
-     document.getElementById(p).innerText = formatTime(t[p]);
-     document.getElementById(p+"Box").classList.remove("next");
-   });
+  function loadPrayer(){
+    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CITY)}&country=${encodeURIComponent(COUNTRY)}&method=${METHOD}`)
+      .then(r => r.json())
+      .then(d => {
+        const t = d?.data?.timings || {};
+        const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 
-   highlightNext(t);
- });
-}
+        // Reset + fill
+        prayers.forEach(p => {
+          const raw = (t[p] || "").toString();
+          document.getElementById(p).innerText = raw ? formatTime(raw) : "--:--";
+          document.getElementById(p+"Box").classList.remove("next");
+        });
 
-/* FORMAT TIME → 03:59 am */
-function formatTime(time){
-  let [h,m] = time.split(":");
-  let hour = parseInt(h);
-  let ampm = hour >= 12 ? "pm" : "am";
-
-  hour = hour % 12;
-  if(hour === 0) hour = 12;
-
-  return `${hour.toString().padStart(2,'0')}:${m} ${ampm}`;
-}
-
-/* HIGHLIGHT NEXT PRAYER */
-function highlightNext(t){
-  const now = new Date();
-  const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-
-  let next = null;
-
-  for(let p of prayers){
-    let [h,m] = t[p].split(":");
-
-    let prayerTime = new Date();
-    prayerTime.setHours(h, m, 0);
-
-    if(prayerTime > now){
-      next = p;
-      break;
-    }
+        highlightNext(t);
+      })
+      .catch(() => {
+        // If API fails, keep UI clean
+        ["Fajr","Dhuhr","Asr","Maghrib","Isha"].forEach(p => {
+          document.getElementById(p).innerText = "--:--";
+          document.getElementById(p+"Box").classList.remove("next");
+        });
+      });
   }
 
-  if(!next) next = "Fajr";
+  // Robust: handles "03:42", or "03:42 (AST)" etc.
+  function normalizeHHMM(timeStr){
+    const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+    if(!m) return null;
+    return { h: parseInt(m[1], 10), m: parseInt(m[2], 10) };
+  }
 
-  document.getElementById(next + "Box").classList.add("next");
-}
+  function formatTime(timeStr){
+    const x = normalizeHHMM(timeStr);
+    if(!x) return "--:--";
+    let hour = x.h;
+    const minute = x.m.toString().padStart(2,"0");
+    const ampm = hour >= 12 ? "pm" : "am";
+    hour = hour % 12;
+    if(hour === 0) hour = 12;
+    return `${hour.toString().padStart(2,"0")}:${minute} ${ampm}`;
+  }
 
-loadPrayer();
-setInterval(loadPrayer, 60000);
+  // ✅ Correct next prayer selection (wrap to next day after Isha)
+  function highlightNext(t){
+    const now = new Date();
+    const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+    let next = null;
+
+    for(const p of prayers){
+      const x = normalizeHHMM(t[p] || "");
+      if(!x) continue;
+
+      const prayerTime = new Date();
+      prayerTime.setHours(x.h, x.m, 0, 0);
+
+      if(prayerTime > now){
+        next = p;
+        break;
+      }
+    }
+
+    // If all passed, next is tomorrow's Fajr
+    if(!next){
+      next = "Fajr";
+    }
+
+    document.getElementById(next + "Box").classList.add("next");
+  }
+
+  loadPrayer();
+  setInterval(loadPrayer, 60000);
 </script>
 
 </body>
 </html>
+``
