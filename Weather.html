@@ -1,65 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body {
-    margin: 0;
-    font-family: Segoe UI;
-    background: transparent;
+  margin:0;
+  font-family: Segoe UI;
 }
 
 .card {
-    width: 100%;
-    max-width: 340px;
-    padding: 16px;
-    border-radius: 16px;
-    background: linear-gradient(180deg,#2c5d87,#1f3c5b);
-    color: white;
-    text-align: center;
+  width:260px;
+  background: linear-gradient(180deg,#2c5d87,#1f3c5b);
+  color:white;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
 }
 
-/* Weather */
-.city { font-size: 18px; font-weight: 600; }
-.temp { font-size: 36px; margin: 5px 0; }
-.weather-icon { width: 60px; }
-
-.details {
-    font-size: 13px;
-    opacity: 0.9;
-    margin-top: 5px;
+.icon {
+  width:50px;
 }
 
-/* Divider */
-.divider {
-    margin: 10px 0;
-    height: 1px;
-    background: rgba(255,255,255,0.2);
+.temp {
+  font-size:28px;
+  margin:5px 0;
 }
 
-/* Prayer */
-.prayer-title { font-size: 16px; margin-bottom: 6px; }
-
-.prayer-grid {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 6px;
-    font-size: 13px;
+.small {
+  font-size:12px;
+  opacity:0.8;
 }
 
-.prayer-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 6px;
-    border-radius: 6px;
+.forecast {
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
 }
 
-/* Highlight next prayer */
-.next {
-    background: rgba(255,255,255,0.2);
-    font-weight: bold;
+.forecast img {
+  width:20px;
 }
 </style>
 </head>
@@ -67,124 +45,54 @@ body {
 <body>
 
 <div class="card">
+  <div id="city">City</div>
+  <img id="icon" class="icon">
+  <div id="condition">Sunny</div>
 
-    <div class="city" id="city">Loading...</div>
+  <div class="small">
+    Wind: <span id="wind"></span> km/h<br>
+    Precip: <span id="precip"></span> mm<br>
+    Pressure: <span id="pressure"></span> mb
+  </div>
 
-    <img id="icon" class="weather-icon">
+  <div class="temp" id="temp">--°C</div>
 
-    <div class="temp" id="temp">--°C</div>
-
-    <div id="condition">--</div>
-
-    <div class="details">
-        Wind: <span id="wind">--</span> km/h |
-        Pressure: <span id="pressure">--</span> mb |
-        Precip: <span id="precip">--</span> mm
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="prayer-title">Next Prayer Highlight 🔔</div>
-
-    <div class="prayer-grid" id="prayers"></div>
-
+  <div class="forecast" id="forecast"></div>
 </div>
 
 <script>
-const WEATHER_API = "b7f587e573bebf4d0037d30b86899760";
+const API_KEY = "b7f587e573bebf4d0037d30b86899760";
 
-let currentCity = "Pune";
+function loadWeather(){
+ fetch(`https://api.openweathermap.org/data/2.5/weather?q=Doha&units=metric&appid=${API_KEY}`)
+ .then(r=>r.json())
+ .then(d=>{
+   city.innerText=d.name;
+   temp.innerText=Math.round(d.main.temp)+"°C";
+   condition.innerText=d.weather[0].main;
+   icon.src=`https://openweathermap.org/img/wn/${d.weather[0].icon}.png`;
 
-// 📍 Get user location
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
+   wind.innerText=d.wind.speed;
+   pressure.innerText=d.main.pressure;
+   precip.innerText=(d.rain?.["1h"])||0;
+ });
 
-            loadWeather(lat, lon);
-            loadPrayer(lat, lon);
-        }, () => {
-            // fallback
-            loadWeatherByCity(currentCity);
-            loadPrayerByCity(currentCity);
-        });
-    }
+ fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Doha&units=metric&appid=${API_KEY}`)
+ .then(r=>r.json())
+ .then(d=>{
+   forecast.innerHTML="";
+   for(let i=0;i<5;i++){
+     let item=d.list[i*8];
+     forecast.innerHTML+=`
+       <div>
+         <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png">
+         <div class="small">${Math.round(item.main.temp)}°</div>
+       </div>`;
+   }
+ });
 }
 
-// 🌤 Weather using coordinates
-function loadWeather(lat, lon) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_API}`)
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("city").textContent = data.name;
-        document.getElementById("temp").textContent = Math.round(data.main.temp) + "°C";
-        document.getElementById("condition").textContent = data.weather[0].main;
-        document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-
-        document.getElementById("wind").textContent = data.wind.speed;
-        document.getElementById("pressure").textContent = data.main.pressure;
-        document.getElementById("precip").textContent = (data.rain && data.rain["1h"]) ? data.rain["1h"] : 0;
-    });
-}
-
-// 🕌 Prayer using coordinates
-function loadPrayer(lat, lon) {
-    fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
-    .then(res => res.json())
-    .then(data => {
-        renderPrayers(data.data.timings);
-    });
-}
-
-// 🧠 Highlight next prayer
-function renderPrayers(timings) {
-    const now = new Date();
-
-    const prayerNames = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-
-    let nextPrayer = null;
-
-    for (let p of prayerNames) {
-        const [h,m] = timings[p].split(":");
-        const prayerTime = new Date();
-        prayerTime.setHours(h, m, 0);
-
-        if (prayerTime > now && !nextPrayer) {
-            nextPrayer = p;
-        }
-    }
-
-    let html = "";
-
-    prayerNames.forEach(p => {
-        const isNext = p === nextPrayer ? "next" : "";
-
-        html += `
-            <div class="prayer-item ${isNext}">
-                <span>${p}</span>
-                <span>${timings[p]}</span>
-            </div>
-        `;
-    });
-
-    document.getElementById("prayers").innerHTML = html;
-}
-
-// fallback
-function loadWeatherByCity(city){
-    loadWeather(18.5204,73.8567);
-}
-function loadPrayerByCity(city){
-    loadPrayer(18.5204,73.8567);
-}
-
-// Init
-getLocation();
-
-// refresh every 10 min
-setInterval(getLocation, 600000);
-
+loadWeather();
 </script>
 
 </body>
