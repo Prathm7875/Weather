@@ -1,136 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>World Weather Dashboard</title>
 
-  <style>
+<style>
     body {
-      margin: 0;
-      background: #eef1f5;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #1d3557;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
 
-    .weather-container {
-      width: 360px;
-    }
-
-    .weather-card {
-      background: linear-gradient(135deg, #4f8af4, #67d5ff);
-      padding: 24px;
-      border-radius: 22px;
-      color: white;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      text-align: center;
-      transition: 0.4s ease;
-    }
-
-    .weather-card:hover {
-      transform: scale(1.02);
+    .card {
+        width: 330px;
+        padding: 20px;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #1f4e78, #1c2942);
+        color: white;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
     select {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 16px;
-      outline: none;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 16px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+    }
+
+    .main-icon {
+        width: 80px;
+        height: 80px;
+        margin: 10px auto;
     }
 
     .temp {
-      font-size: 54px;
-      font-weight: bold;
-      margin: 6px 0;
+        font-size: 42px;
+        margin-top: 10px;
     }
 
-    .desc {
-      font-size: 18px;
-      margin-bottom: 8px;
-      text-transform: capitalize;
+    .details {
+        margin-top: 10px;
+        font-size: 15px;
+        line-height: 1.5;
+        opacity: 0.9;
     }
 
-    .values {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 18px;
-      font-size: 16px;
+    .forecast {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 18px;
     }
 
-    .updated {
-      margin-top: 12px;
-      font-size: 14px;
-      opacity: 0.8;
+    .forecast-day {
+        text-align: center;
+        font-size: 14px;
     }
-  </style>
+
+    .forecast-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .small-temp {
+        font-size: 13px;
+        opacity: 0.9;
+    }
+</style>
 </head>
 
 <body>
 
-<div class="weather-container">
-  
-  <select id="citySelector">
-    <option value="Pune">Pune</option>
-    <option value="Mumbai">Mumbai</option>
-    <option value="Delhi">Delhi</option>
-    <option value="Nagpur">Nagpur</option>
-    <option value="Bengaluru">Bengaluru</option>
-  </select>
+<div class="card">
 
-  <div class="weather-card">
-    <h2 id="cityName">Pune</h2>
-    <img id="icon" width="90" alt="">
-    <div class="temp" id="temp">--°C</div>
-    <div class="desc" id="desc">Loading...</div>
+    <select id="cityDropdown">
+        <option>Doha</option>
+        <option>Dubai</option>
+        <option>London</option>
+        <option>Singapore</option>
+        <option>New York</option>
+        <option>Tokyo</option>
+        <option>Hong Kong</option>
+        <option>Paris</option>
+        <option>Sydney</option>
+        <option>Toronto</option>
+        <option>Chicago</option>
+        <option>Los Angeles</option>
+        <option>Beijing</option>
+        <option>Shanghai</option>
+        <option>Seoul</option>
+        <option>Mumbai</option>
+        <option>Delhi</option>
+        <option>Bangkok</option>
+        <option>Kuala Lumpur</option>
+        <option>Istanbul</option>
+        <option>Rome</option>
+        <option>Barcelona</option>
+        <option>Berlin</option>
+        <option>Amsterdam</option>
+        <option>Riyadh</option>
+        <option>Doha</option>
+        <option>Mexico City</option>
+        <option>Sao Paulo</option>
+        <option>Johannesburg</option>
+        <option>Cairo</option>
+        <option>Nairobi</option>
+        <option>Jakarta</option>
+        <option>Manila</option>
+        <option>Buenos Aires</option>
+        <option>Zurich</option>
+        <option>Geneva</option>
+        <option>Kuwait City</option>
+        <option>Muscat</option>
+        <option>Tehran</option>
+        <option>Baghdad</option>
+        <option>Karachi</option>
+        <option>Colombo</option>
+        <option>Kathmandu</option>
+        <option>Hanoi</option>
+        <option>Ho Chi Minh City</option>
+        <option>Auckland</option>
+        <option>Vancouver</option>
+    </select>
 
-    <div class="values">
-      <div>Humidity: <span id="humidity">--%</span></div>
-      <div>Wind: <span id="wind">-- km/h</span></div>
+    <h2 id="cityName">City</h2>
+
+    <img id="mainIcon" class="main-icon" />
+
+    <h3 id="condition">Condition</h3>
+
+    <div class="details">
+        Wind: <span id="wind">--</span> km/h<br>
+        Precip: <span id="precip">--</span> mm<br>
+        Pressure: <span id="pressure">--</span> mb
     </div>
 
-    <div class="updated" id="updated"></div>
-  </div>
+    <div class="temp" id="temperature">--°C</div>
+
+    <div class="forecast" id="forecastRow"></div>
+
 </div>
 
 <script>
-  const API_KEY = "b7f587e573bebf4d0037d30b86899760";  // <-- Add your key here
-  const citySelector = document.getElementById("citySelector");
+const API_KEY = "b7f587e573bebf4d0037d30b86899760";
 
-  function loadWeather() {
-    const city = citySelector.value;
+const dropdown = document.getElementById("cityDropdown");
+const cityName = document.getElementById("cityName");
+const condition = document.getElementById("condition");
+const mainIcon = document.getElementById("mainIcon");
+const wind = document.getElementById("wind");
+const precip = document.getElementById("precip");
+const pressure = document.getElementById("pressure");
+const temperature = document.getElementById("temperature");
+const forecastRow = document.getElementById("forecastRow");
 
+function loadWeather(city) {
+    cityName.textContent = city;
+    
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("cityName").innerText = city;
-        document.getElementById("temp").innerText = Math.round(data.main.temp) + "°C";
-        document.getElementById("desc").innerText = data.weather[0].description;
-        document.getElementById("humidity").innerText = data.main.humidity + "%";
-        document.getElementById("wind").innerText = data.wind.speed + " km/h";
-        
-        const iconCode = data.weather[0].icon;
-        document.getElementById("icon").src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        .then(r => r.json())
+        .then(data => {
+            condition.textContent = data.weather[0].main;
 
-        const time = new Date().toLocaleTimeString();
-        document.getElementById("updated").innerText = "Updated at: " + time;
-      })
-      .catch(err => console.error(err));
-  }
+            const iconCode = data.weather[0].icon;
+            mainIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
-  citySelector.addEventListener("change", loadWeather);
+            wind.textContent = data.wind.speed;
+            pressure.textContent = data.main.pressure;
+            precip.textContent = (data.rain && data.rain["1h"]) ? data.rain["1h"] : 0;
 
-  loadWeather(); // First load
+            temperature.textContent = Math.round(data.main.temp) + "°C";
+        });
 
-  // Auto-refresh every 10 minutes
-  setInterval(loadWeather, 600000);
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${API_KEY}`)
+        .then(r => r.json())
+        .then(data => {
+            forecastRow.innerHTML = "";
+
+            for (let i = 0; i < 5; i++) {
+                const item = data.list[i * 8];
+                const iconCode = item.weather[0].icon;
+                const temp = Math.round(item.main.temp);
+
+                forecastRow.innerHTML += `
+                    <div class="forecast-day">
+                        https://openweathermap.org/img/wn/${iconCode}.png
+                        <div class="small-temp">${temp}°C</div>
+                    </div>
+                `;
+            }
+        });
+}
+
+// Load initial city
+loadWeather(dropdown.value);
+
+// On dropdown change
+dropdown.addEventListener("change", () => {
+    loadWeather(dropdown.value);
+});
+
+// Auto-refresh every 10 minutes
+setInterval(() => loadWeather(dropdown.value), 600000);
 
 </script>
-
 </body>
 </html>
