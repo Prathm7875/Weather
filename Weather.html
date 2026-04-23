@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #eef1f5;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .weather-container {
+      width: 360px;
+    }
+
+    .weather-card {
+      background: linear-gradient(135deg, #4f8af4, #67d5ff);
+      padding: 24px;
+      border-radius: 22px;
+      color: white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      transition: 0.4s ease;
+    }
+
+    .weather-card:hover {
+      transform: scale(1.02);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .temp {
+      font-size: 54px;
+      font-weight: bold;
+      margin: 6px 0;
+    }
+
+    .desc {
+      font-size: 18px;
+      margin-bottom: 8px;
+      text-transform: capitalize;
+    }
+
+    .values {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      font-size: 16px;
+    }
+
+    .updated {
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="weather-container">
+  
+  <select id="citySelector">
+    <option value="Pune">Pune</option>
+    <option value="Mumbai">Mumbai</option>
+    <option value="Delhi">Delhi</option>
+    <option value="Nagpur">Nagpur</option>
+    <option value="Bengaluru">Bengaluru</option>
+  </select>
+
+  <div class="weather-card">
+    <h2 id="cityName">Pune</h2>
+    <img id="icon" width="90" alt="">
+    <div class="temp" id="temp">--°C</div>
+    <div class="desc" id="desc">Loading...</div>
+
+    <div class="values">
+      <div>Humidity: <span id="humidity">--%</span></div>
+      <div>Wind: <span id="wind">-- km/h</span></div>
+    </div>
+
+    <div class="updated" id="updated"></div>
+  </div>
+</div>
+
+<script>
+  const API_KEY = "YOUR_API_KEY";  // <-- Add your key here
+  const citySelector = document.getElementById("citySelector");
+
+  function loadWeather() {
+    const city = citySelector.value;
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("cityName").innerText = city;
+        document.getElementById("temp").innerText = Math.round(data.main.temp) + "°C";
+        document.getElementById("desc").innerText = data.weather[0].description;
+        document.getElementById("humidity").innerText = data.main.humidity + "%";
+        document.getElementById("wind").innerText = data.wind.speed + " km/h";
+        
+        const iconCode = data.weather[0].icon;
+        document.getElementById("icon").src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+        const time = new Date().toLocaleTimeString();
+        document.getElementById("updated").innerText = "Updated at: " + time;
+      })
+      .catch(err => console.error(err));
+  }
+
+  citySelector.addEventListener("change", loadWeather);
+
+  loadWeather(); // First load
+
+  // Auto-refresh every 10 minutes
+  setInterval(loadWeather, 600000);
+
+</script>
+
+</body>
+</html>
