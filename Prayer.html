@@ -7,45 +7,86 @@ body {
   font-family: Segoe UI;
 }
 
+/* CARD */
 .card {
   width:260px;
-  background: linear-gradient(180deg,#1f4e78,#163a5c);
+  height:360px;
+  background: linear-gradient(180deg,#2c5d87,#1f3c5b);
   color:white;
-  padding:15px;
-  border-radius:10px;
+  padding:16px;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+  box-sizing:border-box;
 }
 
+/* CLOSE BUTTON */
+.close {
+  position:absolute;
+  top:10px;
+  right:12px;
+  font-size:14px;
+  cursor:pointer;
+  opacity:0.8;
+}
+
+/* PRAYER BLOCK */
 .prayer {
-  margin:10px 0;
-  padding:6px;
+  margin-bottom:12px;
+  padding:6px 8px;
   border-radius:6px;
 }
 
+/* NAME + TIME */
 .name {
-  font-size:14px;
+  font-size:13px;
+  opacity:0.7;
 }
 
 .time {
-  font-size:18px;
-  font-weight:bold;
+  font-size:20px;
+  font-weight:600;
+  margin-top:2px;
 }
 
-/* 🔔 Highlight next prayer */
+/* BIG EMPHASIS (like Dhuhr in your image) */
+.highlight-text {
+  font-size:22px;
+  font-weight:700;
+}
+
+/* NEXT PRAYER HIGHLIGHT */
 .next {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
 }
 
-.title {
+/* FOOTER */
+.footer {
+  position:absolute;
+  bottom:12px;
+  left:16px;
   font-size:12px;
-  opacity:0.7;
-  margin-top:10px;
+  opacity:0.6;
+  letter-spacing:1px;
+}
+
+/* MOSQUE BACKGROUND */
+.mosque-bg {
+  position:absolute;
+  bottom:0;
+  right:0;
+  width:170px;
+  opacity:0.08;
+  pointer-events:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card" id="prayerCard">
+<div class="card">
+
+  <div class="close">✕</div>
 
   <div class="prayer" id="FajrBox">
     <div class="name">Fajr</div>
@@ -54,7 +95,7 @@ body {
 
   <div class="prayer" id="DhuhrBox">
     <div class="name">Dhuhr</div>
-    <div class="time" id="Dhuhr"></div>
+    <div class="time highlight-text" id="Dhuhr"></div>
   </div>
 
   <div class="prayer" id="AsrBox">
@@ -72,38 +113,52 @@ body {
     <div class="time" id="Isha"></div>
   </div>
 
-  <div class="title">PRAYER TIMINGS</div>
+  <div class="footer">PRAYER TIMINGS</div>
+
+  <!-- Mosque Image -->
+  <img src="https://www.svgrepo.com/show/403276/mosque.svg" class="mosque-bg">
 
 </div>
 
 <script>
 function loadPrayer(){
- fetch("https://api.aladhan.com/v1/timingsByCity?city=Doha&country=Qatar")
+ fetch("https://api.aladhan.com/v1/timingsByCity?city=Doha&country=Qatar&method=4")
  .then(r=>r.json())
  .then(d=>{
    let t=d.data.timings;
 
    const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 
-   // Set values
    prayers.forEach(p=>{
-     document.getElementById(p).innerText = t[p];
+     document.getElementById(p).innerText = formatTime(t[p]);
      document.getElementById(p+"Box").classList.remove("next");
    });
 
-   highlightNextPrayer(t);
+   highlightNext(t);
  });
 }
 
-// 🔔 Logic to highlight next prayer
-function highlightNextPrayer(timings){
-  const now = new Date();
+/* FORMAT TIME → 03:59 am */
+function formatTime(time){
+  let [h,m] = time.split(":");
+  let hour = parseInt(h);
+  let ampm = hour >= 12 ? "pm" : "am";
 
+  hour = hour % 12;
+  if(hour === 0) hour = 12;
+
+  return `${hour.toString().padStart(2,'0')}:${m} ${ampm}`;
+}
+
+/* HIGHLIGHT NEXT PRAYER */
+function highlightNext(t){
+  const now = new Date();
   const prayers = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
   let next = null;
 
   for(let p of prayers){
-    let [h,m] = timings[p].split(":");
+    let [h,m] = t[p].split(":");
 
     let prayerTime = new Date();
     prayerTime.setHours(h, m, 0);
@@ -114,17 +169,13 @@ function highlightNextPrayer(timings){
     }
   }
 
-  // If all prayers passed → next is Fajr (next day)
   if(!next) next = "Fajr";
 
   document.getElementById(next + "Box").classList.add("next");
 }
 
 loadPrayer();
-
-// refresh every minute (important for accuracy)
 setInterval(loadPrayer, 60000);
-
 </script>
 
 </body>
