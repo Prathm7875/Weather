@@ -1,80 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>World Weather Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-    body {
-        margin: 0;
-        font-family: "Segoe UI", sans-serif;
-        background: #1d3557;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+body {
+    margin: 0;
+    font-family: Segoe UI;
+    background: transparent;
+}
 
-    .card {
-        width: 330px;
-        padding: 20px;
-        border-radius: 20px;
-        background: linear-gradient(180deg, #1f4e78, #1c2942);
-        color: white;
-        text-align: center;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    }
+.card {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(180deg,#2c5d87,#1f3c5b);
+    color: white;
+    text-align: center;
+}
 
-    select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 16px;
-        border-radius: 10px;
-        border: none;
-        outline: none;
-        font-size: 16px;
-    }
+/* Weather */
+.city {
+    font-size: 18px;
+    font-weight: 600;
+}
 
-    .main-icon {
-        width: 80px;
-        height: 80px;
-        margin: 10px auto;
-    }
+.temp {
+    font-size: 36px;
+    margin: 5px 0;
+}
 
-    .temp {
-        font-size: 42px;
-        margin-top: 10px;
-    }
+.weather-icon {
+    width: 60px;
+}
 
-    .details {
-        margin-top: 10px;
-        font-size: 15px;
-        line-height: 1.5;
-        opacity: 0.9;
-    }
+/* Divider */
+.divider {
+    margin: 10px 0;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+}
 
-    .forecast {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 18px;
-    }
+/* Prayer */
+.prayer-title {
+    font-size: 16px;
+    margin-bottom: 6px;
+}
 
-    .forecast-day {
-        text-align: center;
-        font-size: 14px;
-        width: 20%;
-    }
+.prayer-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 6px;
+    font-size: 13px;
+}
 
-    .forecast-icon {
-        width: 35px;
-        height: 35px;
-    }
-
-    .small-temp {
-        font-size: 13px;
-        opacity: 0.9;
-    }
+.prayer-item {
+    display: flex;
+    justify-content: space-between;
+}
 </style>
 </head>
 
@@ -82,135 +67,67 @@
 
 <div class="card">
 
-    <select id="cityDropdown">
-        <option>Doha</option>
-        <option>Dubai</option>
-        <option>London</option>
-        <option>Singapore</option>
-        <option>New York</option>
-        <option>Tokyo</option>
-        <option>Hong Kong</option>
-        <option>Paris</option>
-        <option>Sydney</option>
-        <option>Toronto</option>
-        <option>Chicago</option>
-        <option>Los Angeles</option>
-        <option>Beijing</option>
-        <option>Shanghai</option>
-        <option>Seoul</option>
-        <option>Mumbai</option>
-        <option>Delhi</option>
-        <option>Bangkok</option>
-        <option>Kuala Lumpur</option>
-        <option>Istanbul</option>
-        <option>Rome</option>
-        <option>Barcelona</option>
-        <option>Berlin</option>
-        <option>Amsterdam</option>
-        <option>Riyadh</option>
-        <option>Mexico City</option>
-        <option>Sao Paulo</option>
-        <option>Johannesburg</option>
-        <option>Cairo</option>
-        <option>Nairobi</option>
-        <option>Jakarta</option>
-        <option>Manila</option>
-        <option>Buenos Aires</option>
-        <option>Zurich</option>
-        <option>Geneva</option>
-        <option>Kuwait City</option>
-        <option>Muscat</option>
-        <option>Tehran</option>
-        <option>Baghdad</option>
-        <option>Karachi</option>
-        <option>Colombo</option>
-        <option>Kathmandu</option>
-        <option>Hanoi</option>
-        <option>Ho Chi Minh City</option>
-        <option>Auckland</option>
-        <option>Vancouver</option>
-    </select>
+    <div class="city" id="city">Pune</div>
 
-    <h2 id="cityName">City</h2>
+    <img id="icon" class="weather-icon">
 
-    <img id="mainIcon" class="main-icon" />
+    <div class="temp" id="temp">--°C</div>
 
-    <h3 id="condition">Condition</h3>
+    <div id="condition">Loading...</div>
 
-    <div class="details">
-        Wind: <span id="wind">--</span> km/h<br>
-        Precip: <span id="precip">--</span> mm<br>
-        Pressure: <span id="pressure">--</span> mb
-    </div>
+    <div class="divider"></div>
 
-    <div class="temp" id="temperature">--°C</div>
+    <div class="prayer-title">Prayer Timings</div>
 
-    <div class="forecast" id="forecastRow"></div>
+    <div class="prayer-grid" id="prayers"></div>
 
 </div>
 
 <script>
-const API_KEY = "b7f587e573bebf4d0037d30b86899760";
+const WEATHER_API = "b7f587e573bebf4d0037d30b86899760";
+const CITY = "Pune";
 
-const dropdown = document.getElementById("cityDropdown");
-const cityName = document.getElementById("cityName");
-const condition = document.getElementById("condition");
-const mainIcon = document.getElementById("mainIcon");
-const wind = document.getElementById("wind");
-const precip = document.getElementById("precip");
-const pressure = document.getElementById("pressure");
-const temperature = document.getElementById("temperature");
-const forecastRow = document.getElementById("forecastRow");
-
-function loadWeather(city) {
-    cityName.textContent = city;
-    
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`)
-        .then(r => r.json())
-        .then(data => {
-            condition.textContent = data.weather[0].main;
-
-            const iconCode = data.weather[0].icon;
-            mainIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-
-            wind.textContent = data.wind.speed;
-            pressure.textContent = data.main.pressure;
-            precip.textContent = (data.rain && data.rain["1h"]) ? data.rain["1h"] : 0;
-
-            temperature.textContent = Math.round(data.main.temp) + "°C";
-        });
-
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${API_KEY}`)
-        .then(r => r.json())
-        .then(data => {
-            forecastRow.innerHTML = "";
-
-            for (let i = 0; i < 5; i++) {
-                const item = data.list[i * 8];
-                const iconCode = item.weather[0].icon;
-                const temp = Math.round(item.main.temp);
-
-                forecastRow.innerHTML += `
-                    <div class="forecast-day">
-                        https://openweathermap.org/img/wn/${iconCode}.png
-                        <div class="small-temp">${temp}°C</div>
-                    </div>
-                `;
-            }
-        });
+// Weather
+function loadWeather() {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&appid=${WEATHER_API}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("city").textContent = data.name;
+        document.getElementById("temp").textContent = Math.round(data.main.temp) + "°C";
+        document.getElementById("condition").textContent = data.weather[0].main;
+        document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    });
 }
 
-// Load initial city
-loadWeather(dropdown.value);
+// Prayer Timings
+function loadPrayer() {
+    fetch(`https://api.aladhan.com/v1/timingsByCity?city=Pune&country=India`)
+    .then(res => res.json())
+    .then(data => {
+        const t = data.data.timings;
 
-// On dropdown change
-dropdown.addEventListener("change", () => {
-    loadWeather(dropdown.value);
-});
+        const prayersHTML = `
+            <div class="prayer-item"><span>Fajr</span><span>${t.Fajr}</span></div>
+            <div class="prayer-item"><span>Dhuhr</span><span>${t.Dhuhr}</span></div>
+            <div class="prayer-item"><span>Asr</span><span>${t.Asr}</span></div>
+            <div class="prayer-item"><span>Maghrib</span><span>${t.Maghrib}</span></div>
+            <div class="prayer-item"><span>Isha</span><span>${t.Isha}</span></div>
+        `;
 
-// Auto-refresh every 10 minutes
-setInterval(() => loadWeather(dropdown.value), 600000);
+        document.getElementById("prayers").innerHTML = prayersHTML;
+    });
+}
+
+loadWeather();
+loadPrayer();
+
+// Auto refresh every 10 min
+setInterval(() => {
+    loadWeather();
+    loadPrayer();
+}, 600000);
 
 </script>
+
 </body>
 </html>
